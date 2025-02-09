@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -32,6 +33,22 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		ctx.Set("id", checkToken.UserId)
+		ctx.Set("role", checkToken.Role)
+
+		ctx.Next()
+	}
+}
+
+func AdminMiddleware() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		userRole, exists := ctx.Get("role")
+		fmt.Println("Role from Token:", userRole)
+
+		if !exists || userRole != "admin" {
+			ctx.JSON(http.StatusForbidden, gin.H{"status": 403, "message": "Forbidden: Admins only", "error": true})
+			ctx.Abort()
+			return
+		}
 
 		ctx.Next()
 	}

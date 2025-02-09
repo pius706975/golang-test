@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/pius706975/golang-test/interfaces"
@@ -35,15 +36,17 @@ func (service *authService) SignIn(userData *models.User) (gin.H, int) {
 		return gin.H{"status": 401, "message": "Email or password is incorrect"}, 401
 	}
 
-	jwt := middlewares.NewToken(user.ID, time.Minute*15)
+	jwt := middlewares.NewToken(user.ID, user.Role.Name, time.Minute*15)
 	accessToken, err := jwt.CreateToken()
 
 	if err != nil {
 		return gin.H{"status": 500, "message": err.Error()}, 500
 	}
 
-	refreshTokenJwt := middlewares.NewToken(user.ID, time.Hour*168)
+	refreshTokenJwt := middlewares.NewToken(user.ID, user.Role.Name, time.Hour*168)
 	refreshToken, err := refreshTokenJwt.CreateToken()
+
+	fmt.Println("User Role:", user.Role.Name)
 
 	if err != nil {
 		return gin.H{"status": 500, "message": err.Error()}, 500
@@ -73,7 +76,7 @@ func (service *authService) CreateNewAccessToken(refreshToken string) (gin.H, in
 		return gin.H{"status": 401, "message": "Invalid refresh token"}, 401
 	}
 
-	jwt := middlewares.NewToken(tokenData.UserID, time.Minute*15)
+	jwt := middlewares.NewToken(tokenData.UserID, tokenData.User.RoleID, time.Minute*15)
 	accessToken, err := jwt.CreateToken()
 	if err != nil {
 		return gin.H{"status": 500, "message": "Failed to create access token"}, 500

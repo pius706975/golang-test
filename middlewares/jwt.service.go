@@ -13,12 +13,14 @@ var jwtSecret = []byte(envConfig.LoadConfig().JwtSecret)
 
 type Claims struct {
 	UserId string
+	Role   string `json:"role"`
 	jwt.RegisteredClaims
 }
 
-func NewToken(id string, expiresIn time.Duration) *Claims {
+func NewToken(id string, role string, expiresIn time.Duration) *Claims {
 	return &Claims{
 		UserId:           id,
+		Role:             role,
 		RegisteredClaims: jwt.RegisteredClaims{ExpiresAt: jwt.NewNumericDate(time.Now().Add(expiresIn))},
 	}
 }

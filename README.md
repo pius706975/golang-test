@@ -1,15 +1,15 @@
-# Golang Boilerplate with Gin and GORM
-This is a simple Golang boilerplate with **Gin** framework with a ready-to-use configuration for backend development. You can adjust it according to your requirements.
+# Backend Golang Test
 
 ## Table of Contents
 
 - [Project Structure](#project-structure)
 - [Installation](#installation)
-- [Configuration](#configuration)
 - [Running the Application](#running-the-application)
 - [API Documentation](#api-documentation)
 - [Folder Structure](#folder-structure)
 - [Contributor](#contributor)
+
+---
 
 ## Project Structure
 
@@ -19,7 +19,7 @@ This project uses [Golang](https://golang.org/), [Gin](https://github.com/gin-go
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/pius706975/golang-boilerplate-with-gin.git
+   git clone https://github.com/pius706975/golang-test.git
    ```
 
 2. Install dependencies:
@@ -27,30 +27,85 @@ This project uses [Golang](https://golang.org/), [Gin](https://github.com/gin-go
    go mod tidy
    ```
 
-## Configuration
+3. Database configuration:
+   There are 2 options to configure the database. 
+   a. Using installed PostgreSQL on your computer
+   b. Using Docker Container
 
-1. Copy the `.env.example` file to `.env`:
-   ```bash
-    APP_PORT = 5000
-    BASE_URL = http://localhost:5000/api
-    MODE = development
+   I will explain for docker container to make it easier if you have installed docker container on your computer. 
 
-    DB_PORT = <Db Port>
-    DB_USERNAME = <Db Username>
-    DB_PASSWORD = <Db Password>
-    DB_NAME = <Db Name>
-    DB_HOST = <Db Host>
+  - Run container using docker compose
+    **remove "sudo" if you don't use linux**
+      ```
+      sudo docker compose up
 
-    MAILER_PORT = <smtp port>
-    MAILER_HOST = <smtp host>
-    MAILER_EMAIL = <sender email>
-    MAILER_PASSWORD = <password>
+      *Don't use "-d" if you want to see the process*
+      ```
 
-    JWT_ACCESS_TOKEN_SECRET = <Access Token Secret>
-    JWT_REFRESH_TOKEN_SECRET = <Refresh Token Secret>
-   ```
+   - Check if the container is running 
+      ```
+      sudo docker ps -a
+      ```
 
-2. Update the `.env` file with your environment variables.
+   - If the container is running, execute the container.
+      ```
+      sudo docker exec -it <CONTAINER ID> bash
+      ```
+
+   - Run the psql command 
+      ```
+      psql -U <POSTGRES_USER from docker compose> -d <POSTGRES_DB from docker compose>
+
+      *e.g., "psql -U pius -d db_test"*
+
+      ```
+
+   - Copy the `.env.example` file to `.env`:
+      ```bash
+        APP_PORT = 5000
+        BASE_URL = http://localhost:5000/api
+        MODE = development
+
+        DB_PORT = <Db Port>
+        DB_USERNAME = <Db Username>
+        DB_PASSWORD = <Db Password>
+        DB_NAME = <Db Name>
+        DB_HOST = <Db Host>
+
+        MAILER_PORT = <smtp port>
+        MAILER_HOST = <smtp host>
+        MAILER_EMAIL = <sender email>
+        MAILER_PASSWORD = <password>
+
+        JWT_ACCESS_TOKEN_SECRET = <Access Token Secret>
+        JWT_REFRESH_TOKEN_SECRET = <Refresh Token Secret>
+      ```
+
+   - Update the `.env` file with your environment variables.
+
+   - Migrate the database model into database
+      ```
+        go run . migration 
+        *or*
+        go run . migration -u
+      ```
+  
+  - Fill the tables with existing data
+      ```
+        go run . seed
+        *or*
+        go run . seed -u
+      ```  
+
+  - Delete all data from database
+      ```
+        go run . seed -d
+      ```
+
+  - Drop database
+      ```
+        go run . migration -d
+      ```
 
 ## Running the Application
 
@@ -60,16 +115,9 @@ To start the application, run:
 go run . serve
 ```
 
-To run database migration, use:
-```bash
-# migrate the database models
-go run . migration -u 
-# drop database
-go run . migration -d
-```
 ## API Documentation
 
-API documentation is generated using Swagger v1.16.4
+API documentation is generated using swaggo **v1.16.4**
 . You can access the documentation by running the server and visiting `<your base url>/docs/index.html` in your browser.
 
 ### Generating Swagger Docs
@@ -121,6 +169,6 @@ Here's a breakdown of the project folder structure:
 
 - **.env.example**: Example environment configuration
 
-## 👨‍💻 Contributor
+## 👨‍💻 Author
 
 - Pius Restiantoro - [GitHub](https://github.com/pius706975)
