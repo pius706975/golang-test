@@ -7,7 +7,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/pius706975/golang-test/interfaces"
-	"github.com/pius706975/golang-test/middlewares"
 	"github.com/pius706975/golang-test/package/database/models"
 	"github.com/pius706975/golang-test/package/utils"
 )
@@ -257,65 +256,6 @@ func (service *userService) ResetPassword(email string, password string) (gin.H,
 	}
 
 	return gin.H{"status": 200, "message": "Password reset successfully"}, 200
-}
-
-func (service *userService) CreateRefreshToken(userId string) (gin.H, int) {
-
-	user, err := service.repo.GetUserById(userId)
-
-	if err != nil {
-		if err.Error() == "record not found" {
-			return gin.H{"status": 404, "message": "User not found"}, 404
-		}
-		return gin.H{"status": 500, "message": err.Error()}, 500
-	}
-
-	jwt := middlewares.NewToken(user.ID, time.Hour*168)
-	token, err := jwt.CreateToken()
-
-	if err != nil {
-		return gin.H{"status": 500, "message": err.Error()}, 500
-	}
-
-	expiresAt := time.Now().Add(time.Hour * 168)
-
-	refreshToken := &models.RefreshToken{
-		UserID:    user.ID,
-		Token:     token,
-		ExpiresAt: expiresAt,
-	}
-
-	newRefreshToken, err := service.repo.CreateRefreshToken(refreshToken)
-
-	if err != nil {
-		return gin.H{"status": 500, "message": err.Error()}, 500
-	}
-
-	return gin.H{"status": 201, "message": "Refresh token created successfully", "refresh_token": newRefreshToken.Token}, 201
-}
-
-func (service *userService) DeleteRefreshToken(userId string, refreshToken string) (gin.H, int) {
-	err := service.repo.DeleteRefreshToken(userId, refreshToken)
-	if err != nil {
-		if err.Error() == "refresh token not found" {
-			return gin.H{"status": 404, "message": "Refresh token not found"}, 404
-		}
-		return gin.H{"status": 500, "message": err.Error()}, 500
-	}
-
-	return gin.H{"status": 200, "message": "Refresh token deleted successfully"}, 200
-}
-
-func (service *userService) ValidateRefreshToken(userId string, refreshToken string) (gin.H, int) {
-	token, err := service.repo.ValidateRefreshToken(userId, refreshToken)
-	if err != nil {
-		if err.Error() == "record not found" {
-			return gin.H{"status": 404, "message": "Refresh token not found"}, 404
-		}
-		return gin.H{"status": 500, "message": err.Error()}, 500
-	}
-
-	return gin.H{"status": 200, "message": "Refresh token is valid", "token": token}, 200
 }
 
 func (service *userService) GetUsers() (gin.H, int) {

@@ -31,15 +31,6 @@ func UserRoutes(router *gin.Engine, controller *userController, prefix string) {
 		userGroup.PUT("/reset-password", func(ctx *gin.Context) {
 			controller.ResetPassword(ctx)
 		})
-		userGroup.POST("/refresh-token", func(ctx *gin.Context) {
-			controller.CreateRefreshToken(ctx)
-		})
-		userGroup.DELETE("/refresh-token", func(ctx *gin.Context) {
-			controller.DeleteRefreshToken(ctx)
-		})
-		userGroup.POST("/validate-refresh-token", func(ctx *gin.Context) {
-			controller.ValidateRefreshToken(ctx)
-		})
 
 		userGroup.GET("/", func(ctx *gin.Context) {
 			controller.GetUsers(ctx)

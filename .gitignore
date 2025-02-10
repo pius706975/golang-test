@@ -77,5 +77,6 @@ logs
 server.log
 gin_app.log
 tmp
+debug.log
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,visualstudiocode,go

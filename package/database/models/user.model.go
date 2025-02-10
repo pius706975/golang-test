@@ -5,7 +5,7 @@ import "time"
 type User struct {
 	ID string `gorm:"primarykey; type:uuid; default:uuid_generate_v4()" json:"id,omitempty" valid:"-"`
 
-	RoleID string `gorm:"default: 'e10e672b-4e59-495d-b0c6-1083b038832f'" json:"role_id" valid:"uuidv4"`
+	RoleID string `gorm:"not null" json:"role_id" valid:"uuidv4"`
 	Role   Role   `gorm:"foreignKey:RoleID" json:"role"`
 
 	Name          string    `gorm:"not null" json:"name,omitempty" valid:"type(string), required~Name is required"`

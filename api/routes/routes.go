@@ -4,6 +4,7 @@ import (
 	_ "github.com/pius706975/golang-test/docs"
 	"github.com/pius706975/golang-test/modules/auth"
 	"github.com/pius706975/golang-test/modules/role"
+	"github.com/pius706975/golang-test/modules/transaction"
 	"github.com/pius706975/golang-test/modules/user"
 
 	"github.com/gin-gonic/gin"
@@ -31,6 +32,7 @@ func RouteApp(router *gin.Engine, db *gorm.DB) error {
 	role.RoleRoutesModule(router, db, APIPrefix)
 	user.UserRoutesModule(router, db, APIPrefix)
 	auth.AuthRoutesModule(router, db, APIPrefix)
+	transaction.TransactionModule(router, db, APIPrefix)
 
 	return nil
 }

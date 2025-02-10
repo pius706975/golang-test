@@ -11,6 +11,13 @@ definitions:
       refresh_token:
         type: string
     type: object
+  models.CreateTransactionRequest:
+    properties:
+      amount:
+        type: number
+      payment_method:
+        type: string
+    type: object
   models.ResetPasswordRequest:
     properties:
       email:
@@ -53,6 +60,11 @@ definitions:
       name:
         type: string
       phone_number:
+        type: string
+    type: object
+  models.UpdateTransactionStatusRequest:
+    properties:
+      status:
         type: string
     type: object
   models.VerifyAccountRequest:
@@ -157,6 +169,169 @@ paths:
       summary: Add Role
       tags:
       - Roles
+  /api/transactions:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve transactions with optional filters (user_id, status, pagination)
+      parameters:
+      - description: User ID filter
+        in: query
+        name: user_id
+        type: string
+      - description: Transaction status filter (pending, success, failed)
+        in: query
+        name: status
+        type: string
+      - description: 'Page number for pagination (default: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Limit number of transactions per page (default: 10)'
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get Transactions
+      tags:
+      - Transactions
+    post:
+      consumes:
+      - application/json
+      description: Create transaction
+      parameters:
+      - description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Transaction data
+        in: body
+        name: userData
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateTransactionRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+      summary: Create Transaction
+      tags:
+      - Transactions
+  /api/transactions/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a transaction by role ID
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Delete a transaction
+      tags:
+      - Transactions
+    get:
+      consumes:
+      - application/json
+      description: Fetch the transaction details based on the ID provided
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Get transaction by ID
+      tags:
+      - Transactions
+    put:
+      consumes:
+      - application/json
+      description: Update transaction status
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Transaction data
+        in: body
+        name: userData
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateTransactionStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      summary: Update Transaction
+      tags:
+      - Transactions
+  /api/transactions/dashboard/summary:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve transactions summary
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      summary: Get Transactions summary
+      tags:
+      - Transactions
   /api/user-service/role/{id}:
     delete:
       consumes:
@@ -209,6 +384,12 @@ paths:
       consumes:
       - application/json
       description: Fetch all users
+      parameters:
+      - description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
