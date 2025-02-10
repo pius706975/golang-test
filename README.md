@@ -17,38 +17,70 @@ This project uses [Golang](https://golang.org/), [Gin](https://github.com/gin-go
 
 ## Installation
 
-1. Clone the repository:
+**1. Clone the repository:**
    ```bash
    git clone https://github.com/pius706975/golang-test.git
    ```
 
-2. Install dependencies:
+**2. Install dependencies:**
    ```bash
    go mod tidy
    ```
 
-3. Database configuration:
+**3. Database configuration:**
+
    There are 2 options to configure the database. 
-   a. Using installed PostgreSQL on your computer
-   b. Using Docker Container
+
+   - Using installed PostgreSQL on your computer
+   - Using Docker Container
 
    I will explain for docker container to make it easier if you have installed docker container on your computer. 
 
-  - Run container using docker compose
-    **remove "sudo" if you don't use linux**
+  - Run postgres container using docker compose
+
+    ```bash
+        version: "3.8"
+
+        services:
+        postgres:
+            image: postgres:17.0-alpine3.19
+            container_name: local-postgres
+            restart: always
+            environment:
+            POSTGRES_DB: db_test
+            POSTGRES_USER: pius
+            POSTGRES_PASSWORD: piuspius
+            ports:
+            - "5433:5432"
+            volumes:
+            - postgres_data:/var/lib/postgresql/data
+            networks:
+            - backend_network
+
+        volumes:
+        postgres_data:
+            driver: local
+
+        networks:
+        backend_network:
+            driver: bridge
+
       ```
+
+    ***remove "sudo" if you don't use linux***
+      ``` bash
       sudo docker compose up
 
       *Don't use "-d" if you want to see the process*
       ```
 
    - Check if the container is running 
-      ```
+      ``` bash
       sudo docker ps -a
       ```
 
    - If the container is running, execute the container.
-      ```
+      ``` bash
       sudo docker exec -it <CONTAINER ID> bash
       ```
 
@@ -84,26 +116,26 @@ This project uses [Golang](https://golang.org/), [Gin](https://github.com/gin-go
    - Update the `.env` file with your environment variables.
 
    - Migrate the database model into database
-      ```
+      ``` bash
         go run . migration 
         *or*
         go run . migration -u
       ```
   
   - Fill the tables with existing data
-      ```
+      ``` bash
         go run . seed
         *or*
         go run . seed -u
       ```  
 
   - Delete all data from database
-      ```
+      ``` bash
         go run . seed -d
       ```
 
   - Drop database
-      ```
+      ``` bash
         go run . migration -d
       ```
 
@@ -114,6 +146,12 @@ To start the application, run:
 ```bash
 go run . serve
 ```
+
+To create a new transaction, we need to login first and use the token.
+
+Use one of these accounts:
+- email: jerry@gmail.com, tom@gmail.com
+- password: User@123
 
 ## API Documentation
 
